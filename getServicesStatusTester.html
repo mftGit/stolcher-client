@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>stolcher-client test</title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
+      .row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+      label { display: grid; gap: 6px; }
+      input { padding: 8px; min-width: 240px; }
+      button { padding: 10px 14px; cursor: pointer; }
+      pre { background: #0b1020; color: #d7e1ff; padding: 12px; border-radius: 8px; overflow: auto; }
+      .muted { color: #666; font-size: 0.9rem; }
+    </style>
+  </head>
+
+  <body>
+    <h1>getServicesStatus() tester</h1>
+
+    <div class="row">
+      <label>
+        Version
+        <input id="version" type="number" value="1" min="1" step="1" />
+      </label>
+
+      <label>
+        Service name (optional)
+        <input id="serviceName" type="text" placeholder="e.g. Emnify" />
+      </label>
+
+      <button id="runBtn">Run</button>
+    </div>
+
+    <p class="muted">
+      Note: if the remote endpoint doesn’t allow CORS, the browser may block the response.
+    </p>
+
+    <h3>Result</h3>
+    <pre id="output">Click “Run”.</pre>
+
+    <script src="./stolcher-client.js"></script>
+    <script>
+      const $ = (id) => document.getElementById(id)
+
+      function show(obj) {
+        $('output').textContent =
+          typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2)
+      }
+
+      $('runBtn').addEventListener('click', async () => {
+        try {
+          const version = Number($('version').value)
+          const serviceNameRaw = $('serviceName').value.trim()
+          const serviceName = serviceNameRaw.length ? serviceNameRaw : undefined
+
+          if (!window.stolcherClient?.getServicesStatus) {
+            show('Error: window.stolcherClient.getServicesStatus is not available.')
+            return
+          }
+
+          show('Loading...')
+          const result = await window.stolcherClient.getServicesStatus(version, serviceName)
+
+          if (result === false) {
+            show('No monitoring endpoint reachable (iterateOverServices returned false).')
+            return
+          }
+
+          show(result)
+        } catch (err) {
+          show({ error: String(err), details: err })
+          console.error(err)
+        }
+      })
+    </script>
+  </body>
+</html>
