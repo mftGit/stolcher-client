@@ -1,9 +1,10 @@
 'use strict'
 
 const URL_TEMPLATE = 'https://monitoring<number>.mftitalia.it';
-const START_NUMBER = 1;
-const END_NUMBER = 2;
-
+const MONITORING_SERVICES = [
+    {name: 'Atlantis', number: 1},
+    {name: 'EasyCast', number: 2}
+];
 
 /**
  * Restituisce un array con la lista di tutti i servizi.
@@ -64,31 +65,36 @@ async function getOnlineMastersAndSlaves(version) {
     }
 
     const mastersAndSlaves = [];
-    await iterateOverServices(async (baseUrl) => {
+    await iterateOverServices(async (baseUrl, serviceName, n) => {
         let url = baseUrl + `/api/monitoredServices`;
+        const monitoringName = `Monitoring ${n} ${serviceName}`;
         try {
             await (await fetch(url)).json();
             mastersAndSlaves.push({
-                monitoring: url,
+                monitoringName: monitoringName,
+                monitoringUrl: baseUrl,
                 status: 'ONLINE'
             });
         } catch (e) {
             mastersAndSlaves.push({
-                monitoring: url,
+                monitoringName: monitoringName,
+                monitoringUrl: baseUrl,
                 status: 'OFFLINE'
             });
             throw e;
         }
-    });
+    }, true);
 
     return mastersAndSlaves;
 }
 
-async function iterateOverServices(callback) {
-    for (let i = START_NUMBER; i <= END_NUMBER; i++) {
-        const url = URL_TEMPLATE.replace('<number>', i.toString());
+async function iterateOverServices(callback, iterateAll = false) {
+    for (const {name, number} of MONITORING_SERVICES) {
+        const url = URL_TEMPLATE.replace('<number>', number.toString());
         try {
-            return await callback(url);
+            const result = await callback(url, name, number);
+            if (!iterateAll)
+                return result;
         } catch (e) {
             console.log('Error while calling monitoring service ' + url + ': ' + e);
         }

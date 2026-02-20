@@ -1,18 +1,19 @@
 export {};
 
-interface MasterSlaveStatus {
-    monitoring: string;
+export interface MasterSlaveStatus {
+    monitoringName: string;
+    monitoringUrl: string;
     status: 'ONLINE' | 'OFFLINE';
 }
 
-interface ServiceStatus {
+export interface ServiceStatus {
     lastCheckedAt: string; // ISO date-time
     monitoredServiceName: string;
     status: 'ONLINE' | 'OFFLINE' | 'WARNING';
     statusMessage?: string;
 }
 
-interface MonitoredService {
+export interface MonitoredService {
     monitoredServiceName: string;
     activeMonitoring: boolean;
 }
