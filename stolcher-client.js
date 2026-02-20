@@ -2,7 +2,7 @@
 
 const URL_TEMPLATE = 'https://monitoring<number>.mftitalia.it';
 const START_NUMBER = 1;
-const END_NUMBER = 10;
+const END_NUMBER = 2;
 
 
 /**
@@ -66,11 +66,19 @@ async function getOnlineMastersAndSlaves(version) {
     const mastersAndSlaves = [];
     await iterateOverServices(async (baseUrl) => {
         let url = baseUrl + `/api/monitoredServices`;
-        await (await fetch(url)).json();
-        mastersAndSlaves.push({
-            monitoring: url,
-            online: true
-        });
+        try {
+            await (await fetch(url)).json();
+            mastersAndSlaves.push({
+                monitoring: url,
+                status: 'ONLINE'
+            });
+        } catch (e) {
+            mastersAndSlaves.push({
+                monitoring: url,
+                status: 'OFFLINE'
+            });
+            throw e;
+        }
     });
 
     return mastersAndSlaves;
@@ -82,12 +90,7 @@ async function iterateOverServices(callback) {
         try {
             return await callback(url);
         } catch (e) {
-            if (typeof e?.message === 'string' && e.message.includes('Failed to fetch')) {
-                console.log('Domain not resolved for ' + url);
-                return null;
-            } else {
-                console.log('Error while calling monitoring service ' + url + ': ' + e);
-            }
+            console.log('Error while calling monitoring service ' + url + ': ' + e);
         }
     }
     return null;
