@@ -9,7 +9,7 @@ export interface MasterSlaveStatus {
 export interface ServiceStatus {
     lastCheckedAt: string; // ISO date-time
     monitoredServiceName: string;
-    status: 'ONLINE' | 'OFFLINE' | 'WARNING';
+    status: 'Online' | 'Offline' | 'Warning';
     statusMessage?: string;
 }
 
