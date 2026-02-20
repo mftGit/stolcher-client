@@ -67,7 +67,7 @@ async function getOnlineMastersAndSlaves(version) {
     const mastersAndSlaves = [];
     await iterateOverServices(async (baseUrl, serviceName, n) => {
         let url = baseUrl + `/api/monitoredServices`;
-        const monitoringName = `Monitoring ${n} ${serviceName}`;
+        const monitoringName = `Monitoring ${n} - ${serviceName}`;
         try {
             await (await fetch(url)).json();
             mastersAndSlaves.push({
