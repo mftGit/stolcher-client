@@ -3,7 +3,7 @@ export {};
 export interface MasterSlaveStatus {
     monitoringName: string;
     monitoringUrl: string;
-    status: 'ONLINE' | 'OFFLINE';
+    status: 'Online' | 'Offline';
 }
 
 export interface ServiceStatus {

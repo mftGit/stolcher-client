@@ -73,13 +73,13 @@ async function getOnlineMastersAndSlaves(version) {
             mastersAndSlaves.push({
                 monitoringName: monitoringName,
                 monitoringUrl: baseUrl,
-                status: 'ONLINE'
+                status: 'Online'
             });
         } catch (e) {
             mastersAndSlaves.push({
                 monitoringName: monitoringName,
                 monitoringUrl: baseUrl,
-                status: 'OFFLINE'
+                status: 'Offline'
             });
             throw e;
         }
