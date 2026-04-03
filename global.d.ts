@@ -11,6 +11,7 @@ export interface ServiceStatus {
     monitoredServiceName: string;
     status: 'Online' | 'Offline' | 'Warning';
     statusMessage?: string;
+    notes?: string;
 }
 
 export interface MonitoredService {
